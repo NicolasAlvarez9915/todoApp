@@ -17,6 +17,7 @@ export class HomePage {
   newTaskTitle: string = '';
   categoryId?: number;
   categories: ICategory[] = [];
+  filterCategoryId: number | null = null;  // null significa sin filtro (mostrar todas)
 
   constructor(
     private modalCtrl: ModalController,
@@ -84,6 +85,13 @@ export class HomePage {
 
   getCategoryName(categoryId?: number) {
     return this.categories.find(c => c.id === categoryId)?.name || 'Sin categoría';
+  }
+
+  get filteredTasks() {
+    if (!this.filterCategoryId) {
+      return this.tasks;
+    }
+    return this.tasks.filter(task => task.categoryId === this.filterCategoryId);
   }
 
 }
