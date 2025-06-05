@@ -15,6 +15,7 @@ import { CategoryServiceService } from '../services/category-service.service';
 export class HomePage {
   tasks: ITask[] = [];
   newTaskTitle: string = '';
+  categoryId?: number;
   categories: ICategory[] = [];
 
   constructor(
@@ -66,7 +67,7 @@ export class HomePage {
 
   async addTask() {
     if (this.newTaskTitle.trim().length === 0) return;
-    await this.taskService.addTask(this.newTaskTitle.trim());
+    await this.taskService.addTask(this.newTaskTitle.trim(), this.categoryId!);
     this.newTaskTitle = '';
     this.loadTasks();
   }
@@ -79,6 +80,10 @@ export class HomePage {
   async deleteTask(id: number) {
     await this.taskService.deleteTask(id);
     this.loadTasks();
+  }
+
+  getCategoryName(categoryId?: number) {
+    return this.categories.find(c => c.id === categoryId)?.name || 'Sin categoría';
   }
 
 }

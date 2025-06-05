@@ -24,11 +24,12 @@ export class TaskService {
     return this.tasks;
   }
 
-  async addTask(title: string) {
+  async addTask(title: string, categoryId: number) {
     const newTask: ITask = {
       id: Date.now(),
       title,
-      completed: false
+      completed: false,
+      categoryId: categoryId
     };
     this.tasks.push(newTask);
     await this._storage?.set(this.tasksKey, this.tasks);
