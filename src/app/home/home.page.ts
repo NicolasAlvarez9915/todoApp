@@ -19,10 +19,9 @@ export class HomePage {
   newTaskTitle: string = '';
   categoryId?: number;
   categories: ICategory[] = [];
-  filterCategoryId: number | null = null;  // null significa sin filtro (mostrar todas)
+  filterCategoryId: number | null = null;
   showFeature = false;
 
-  // Para paginación incremental
   displayedTasks: ITask[] = [];
   pageSize = 10;
   currentPage = 0;
@@ -47,7 +46,6 @@ export class HomePage {
       component: CategoryModalComponent,
       componentProps: { mode: 'create' },
     });
-
     modal.onDidDismiss().then(() => this.loadCategories());
     await modal.present();
   }
@@ -57,7 +55,6 @@ export class HomePage {
       component: CategoryModalComponent,
       componentProps: { mode: 'edit', category },
     });
-
     modal.onDidDismiss().then(() => this.loadCategories());
     await modal.present();
   }
@@ -65,14 +62,13 @@ export class HomePage {
   async deleteCategory(id: number) {
     await this.categoryService.deleteCategory(id);
     await this.loadCategories();
-    this.loadTasks(true);  // recargar tareas tras cambiar categorías
+    this.loadTasks(true);
   }
 
   async loadCategories() {
     this.categories = await this.categoryService.getCategories();
   }
 
-  // Getter para filtrar tareas según categoría seleccionada
   get filteredTasks(): ITask[] {
     if (!this.filterCategoryId) {
       return this.tasks;
@@ -86,11 +82,9 @@ export class HomePage {
       this.displayedTasks = [];
       this.tasks = this.taskService.getAllTasks();
     }
-
     const allTasks = this.filteredTasks;
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;
-
     const nextTasks = allTasks.slice(start, end);
     this.displayedTasks = [...this.displayedTasks, ...nextTasks];
     this.currentPage++;
@@ -99,15 +93,12 @@ export class HomePage {
   async loadMoreTasks(event: any) {
     const allTasks = this.filteredTasks;
     const start = this.currentPage * this.pageSize;
-
     if (start >= allTasks.length) {
       this.noMoreTasks = true;
     } else {
       this.noMoreTasks = false;
-      // Carga la siguiente página igual que en loadTasks(false)
       this.loadTasks(false);
     }
-
     event.target.complete();
   }
 
@@ -120,10 +111,15 @@ export class HomePage {
 
   async addTask() {
     if (this.newTaskTitle.trim().length === 0) return;
-    await this.taskService.addTask(this.newTaskTitle.trim(), this.categoryId!);
+    const newTask = await this.taskService.addTask(this.newTaskTitle.trim(), this.categoryId!);
     this.newTaskTitle = '';
-    this.tasks = this.taskService.getAllTasks();  // actualizar tareas
-    this.loadTasks(true);
+    this.tasks.push(newTask);
+    this.noMoreTasks = false;
+    if (!this.filterCategoryId || this.filterCategoryId === newTask.categoryId) {
+      if (this.displayedTasks.length < (this.currentPage * this.pageSize)) {
+        this.displayedTasks.push(newTask);
+      }
+    }
   }
 
   async toggleCompleted(id: number) {
@@ -131,11 +127,17 @@ export class HomePage {
     this.tasks = this.taskService.getAllTasks();
     this.loadTasks(true);
   }
-
   async deleteTask(id: number) {
     await this.taskService.deleteTask(id);
-    this.tasks = this.taskService.getAllTasks();
-    this.loadTasks(true);
+    this.tasks = this.tasks.filter(task => task.id !== id);
+    this.displayedTasks = this.displayedTasks.filter(task => task.id !== id);
+    const allFilteredTasks = this.filteredTasks;
+    const expectedDisplayedCount = this.currentPage * this.pageSize;
+    if (this.displayedTasks.length < expectedDisplayedCount) {
+      const start = this.displayedTasks.length;
+      const nextTasks = allFilteredTasks.slice(start, expectedDisplayedCount);
+      this.displayedTasks = [...this.displayedTasks, ...nextTasks];
+    }
   }
 
   getCategoryName(categoryId?: number) {

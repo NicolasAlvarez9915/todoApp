@@ -30,19 +30,16 @@ export class CategoryModalComponent implements OnInit {
 
   async save() {
     if (!this.name.trim()) return;
-
     const newCategory: ICategory = {
       id: this.category?.id ?? Date.now(),
       name: this.name.trim(),
       color: this.color,
     };
-
     if (this.mode === 'edit') {
       await this.categoryService.updateCategory(newCategory);
     } else {
       await this.categoryService.addCategory(newCategory);
     }
-
     this.modalCtrl.dismiss(true);
   }
 

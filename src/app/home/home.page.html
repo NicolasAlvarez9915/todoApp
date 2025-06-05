@@ -3,12 +3,9 @@
     <ion-title>Lista de Tareas</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-card *ngIf="showFeature">
-
   <ion-card-content>
     <ion-button expand="full" (click)="openCategoryModal()">Nueva Categoría</ion-button>
-
     <ion-list>
       <ion-item *ngFor="let category of categories">
         <ion-label>{{ category.name }}</ion-label>
@@ -19,7 +16,6 @@
     </ion-list>
   </ion-card-content>
 </ion-card>
-
 <ion-content class="ion-padding">
   <ion-item>
     <ion-input [(ngModel)]="newTaskTitle" placeholder="Nueva tarea"></ion-input>
@@ -33,7 +29,6 @@
     </ion-item>
     <ion-button (click)="addTask()" [disabled]="!newTaskTitle">Agregar</ion-button>
   </ion-item>
-
   <ion-item>
     <ion-label>Filtrar por Categoría</ion-label>
     <ion-select [(ngModel)]="filterCategoryId" (ionChange)="loadTasks(true)" interface="popover" placeholder="Todas">
@@ -43,7 +38,6 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-
   <ion-list>
     <ion-item *ngFor="let task of displayedTasks">
       <ion-checkbox slot="start" [(ngModel)]="task.completed" (ionChange)="toggleCompleted(task.id)"></ion-checkbox>

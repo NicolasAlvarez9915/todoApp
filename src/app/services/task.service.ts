@@ -33,6 +33,7 @@ export class TaskService {
     };
     this.tasks.push(newTask);
     await this._storage?.set(this.tasksKey, this.tasks);
+    return newTask
   }
 
   async toggleCompleted(id: number) {
