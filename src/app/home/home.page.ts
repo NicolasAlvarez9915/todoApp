@@ -5,6 +5,7 @@ import { ICategory } from '../models/interfaces/ICategory';
 import { ModalController } from '@ionic/angular';
 import { CategoryModalComponent } from './modals/category-modal/category-modal.component';
 import { CategoryServiceService } from '../services/category-service.service';
+import { FeatureFlagService } from '../services/feature-flag.service';
 
 @Component({
   selector: 'app-home',
@@ -18,13 +19,19 @@ export class HomePage {
   categoryId?: number;
   categories: ICategory[] = [];
   filterCategoryId: number | null = null;  // null significa sin filtro (mostrar todas)
+  showFeature = false;
+
 
   constructor(
+    private featureFlagService: FeatureFlagService,
     private modalCtrl: ModalController,
     private taskService: TaskService,
     private categoryService: CategoryServiceService) { }
 
   async ngOnInit() {
+
+    this.showFeature = await this.featureFlagService.isFeatureEnabled();
+    console.log(this.showFeature);
     await this.taskService.init();
     this.loadTasks();
   }
