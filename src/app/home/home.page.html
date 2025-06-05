@@ -4,6 +4,24 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Categorías</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-button expand="full" (click)="openCategoryModal()">Nueva Categoría</ion-button>
+
+    <ion-list>
+      <ion-item *ngFor="let category of categories">
+        <ion-label>{{ category.name }}</ion-label>
+        <ion-button fill="clear" size="small" (click)="editCategory(category)">Editar</ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="deleteCategory(category.id)">Eliminar</ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
 <ion-content class="ion-padding">
   <ion-item>
     <ion-input [(ngModel)]="newTaskTitle" placeholder="Nueva tarea"></ion-input>
