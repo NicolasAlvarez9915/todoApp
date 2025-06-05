@@ -5,9 +5,6 @@
 </ion-header>
 
 <ion-card *ngIf="showFeature">
-  <ion-card-header>
-    <ion-card-title>Categorías</ion-card-title>
-  </ion-card-header>
 
   <ion-card-content>
     <ion-button expand="full" (click)="openCategoryModal()">Nueva Categoría</ion-button>
@@ -39,7 +36,7 @@
 
   <ion-item>
     <ion-label>Filtrar por Categoría</ion-label>
-    <ion-select [(ngModel)]="filterCategoryId" interface="popover" placeholder="Todas">
+    <ion-select [(ngModel)]="filterCategoryId" (ionChange)="loadTasks(true)" interface="popover" placeholder="Todas">
       <ion-select-option [value]="null">Todas</ion-select-option>
       <ion-select-option *ngFor="let category of categories" [value]="category.id">
         {{ category.name }}
@@ -48,7 +45,7 @@
   </ion-item>
 
   <ion-list>
-    <ion-item *ngFor="let task of filteredTasks">
+    <ion-item *ngFor="let task of displayedTasks">
       <ion-checkbox slot="start" [(ngModel)]="task.completed" (ionChange)="toggleCompleted(task.id)"></ion-checkbox>
       <ion-label [class.completed]="task.completed">{{ task.title }}</ion-label>
       <p>{{ getCategoryName(task.categoryId) }}</p>
@@ -57,4 +54,11 @@
       </ion-button>
     </ion-item>
   </ion-list>
+  <ion-item *ngIf="noMoreTasks" lines="none" class="ion-text-center">
+    No hay más tareas para mostrar.
+  </ion-item>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreTasks($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más tareas...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
